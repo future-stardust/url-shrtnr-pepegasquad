@@ -5,8 +5,8 @@ This is a university project for "Software testing" course labs made by team **P
 ## Students group
 
 - Федоряченко Ярослав `yar.fed99@gmail.com`
-- Феофанов Іван `yar.fed99@gmail.com`
-- Гуменюк Олександр `yar.fed99@gmail.com`
+- Феофанов Іван `vanya6677@gmail.com`
+- Гуменюк Олександр `sanya190900@gmail.com`
 
 ## Design document
 
