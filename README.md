@@ -1,27 +1,18 @@
-# {Team Name} - URL shortener {🧪}
+# Pepega Squad - URL shortener 🐸
 
-This is a template project for "Software testing" course labs. Use it to create your own repo and 
-fulfill/rewrite this document (at least, replace everything in `{...}`).
+This is a university project for "Software testing" course labs made by team **Pepega Squad**.
 
 ## Students group
 
-- {Surname Name (in Ukrainian)} {email}
-- ...
-- {Surname Name (in Ukrainian)} {email}
+- Федоряченко Ярослав `yar.fed99@gmail.com`
+- Феофанов Іван `vanya6677@gmail.com`
+- Гуменюк Олександр `sanya190900@gmail.com`
 
 ## Design document
 
-The [design document]({Place actual link to the design document Google Docs file here}) that
-describes architecture and implementation details of this project.
+The [design document] that describes architecture and implementation details of this project.
 
 ### System structure
-
-After the third laboratory assignment groups will switch projects with one another. Because of this,
-all projects have to have the same high-level structure. Also, this is the reason why you should not
-modify project dependencies.
-
-Please remember that the main goal of the course is **testing** and everything else is just an 
-implementation harness.
 
 There are four modules:
 - `auth` **authentication module** - creates new users, authenticates existing ones
@@ -71,3 +62,4 @@ Write commit messages accordingly by [7 rules of good commit messages].
 [Micronaut]: https://micronaut.io/
 [checkstyle]: https://checkstyle.org/
 [Checkstyle-IDEA]: https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
+[design document]: https://docs.google.com/document/d/1RLWUjbNFWLdV0cQyk8X_D1ySTUcvOPi4ituxAmTkd5A/edit#heading=h.k57aj13un2t
