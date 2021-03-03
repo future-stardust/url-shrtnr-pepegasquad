@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class UserActions {
   /**
-   * Crate user.
+   * Create user.
    *
    * @param user user
    * @return result of creation
