@@ -10,5 +10,4 @@ class HelloTest {
   void simpleAlwaysGreenTest() {
     assertThat(0).isEqualTo(1);
   }
-
 }

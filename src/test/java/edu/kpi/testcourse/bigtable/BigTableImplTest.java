@@ -1,5 +1,8 @@
 package edu.kpi.testcourse.bigtable;
 
+import com.google.gson.JsonObject;
+import edu.kpi.testcourse.logic.UserActions;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -10,10 +13,14 @@ class BigTableImplTest {
   void checkValueSaving() {
     BigTableImpl bigTable = new BigTableImpl();
 
-    bigTable.put("testKey", "testValue");
-    String value = bigTable.get("testKey");
+    JsonObject object = new JsonObject();
+    object.addProperty("email" , "testEmail@gmail.com");
+    object.addProperty("password" , UserActions.hash("testPassword"));
+    object.addProperty("urlList" , "");
+    bigTable.putUser("testKey", object);
+    JsonObject value = bigTable.getUser("testKey");
 
-    assertThat(value).isEqualTo("testValue");
+    assertThat(value).isEqualTo(object);
   }
 
 }
