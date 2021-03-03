@@ -13,12 +13,10 @@ import io.micronaut.security.rules.SecurityRule;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller
 public class ApiController {
-
   record ExampleClass(String first, String second) {}
 
   @Get(value = "/hello", produces = MediaType.APPLICATION_JSON)
   public String hello() {
     return Main.getGson().toJson(new ExampleClass("Hello", "world!"));
   }
-
 }
