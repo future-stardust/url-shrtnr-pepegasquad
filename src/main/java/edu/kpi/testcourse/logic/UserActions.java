@@ -71,15 +71,13 @@ public class UserActions {
    * @return result of search
    */
   public static boolean findUserByEmail(String email) {
-    boolean find = false;
     for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
       if (email.equals(Main.getGson().fromJson(entry.getValue(), User.class).getEmail())) {
-        find = true;
-        break;
+        return true;
       }
     }
 
-    return find;
+    return false;
   }
 
   /**
@@ -90,17 +88,15 @@ public class UserActions {
    * @return result of validation
    */
   public static boolean checkPassword(String providedEmail, String providedPassword) {
-    boolean find = false;
     for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
       if ((providedEmail.equals(Main.getGson().fromJson(entry.getValue(), User.class)
           .getEmail()))
           && (hash(providedPassword).equals(Main.getGson().fromJson(entry.getValue(), User.class)
           .getPassword()))) {
-        find = true;
-        break;
+        return true;
       }
     }
 
-    return find;
+    return false;
   }
 }
