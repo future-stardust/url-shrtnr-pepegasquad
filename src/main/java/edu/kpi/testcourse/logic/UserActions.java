@@ -29,7 +29,7 @@ public class UserActions {
       boolean find = false;
       for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
         if ((user.getEmail()
-            .equals(Main.getGson().fromJson(entry.getValue(), User.class).getEmail()))) {
+          .equals(Main.getGson().fromJson(entry.getValue(), User.class).getEmail()))) {
           find = true;
           break;
         }
@@ -83,20 +83,30 @@ public class UserActions {
   /**
    * Check password.
    *
-   * @param providedEmail       email which provided
-   * @param providedPassword    password which provided
+   * @param providedEmail    email which provided
+   * @param providedPassword password which provided
    * @return result of validation
    */
   public static boolean checkPassword(String providedEmail, String providedPassword) {
     for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
       if ((providedEmail.equals(Main.getGson().fromJson(entry.getValue(), User.class)
-          .getEmail()))
-          && (hash(providedPassword).equals(Main.getGson().fromJson(entry.getValue(), User.class)
-          .getPassword()))) {
+        .getEmail()))
+        && (hash(providedPassword).equals(Main.getGson().fromJson(entry.getValue(), User.class)
+        .getPassword()))) {
         return true;
       }
     }
 
     return false;
+  }
+
+  /**
+   * Check password.
+   *
+   * @param shortenedUlr shortened url
+   * @param fullUrl full url provided by user
+   */
+  public static void putUrl(String shortenedUlr, String fullUrl) {
+    Main.bigTable.putUrl(shortenedUlr, fullUrl);
   }
 }

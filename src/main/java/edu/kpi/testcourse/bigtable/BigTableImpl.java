@@ -15,14 +15,23 @@ public class BigTableImpl implements BigTable {
   public static final Map<String, JsonObject> users = new HashMap<>();
   public static final Map<String, String> urls = new HashMap<>();
 
+  private static Integer urlId = 1;
+
   @Override
   public void putUser(String key, JsonObject value) {
     users.put(key, value);
   }
 
+
   @Override
   public void putUrl(String key, String value) {
     urls.put(key, value);
+    urlId++;
+  }
+
+  @Override
+  public Integer getUrlId() {
+    return urlId;
   }
 
   @Override
@@ -34,4 +43,10 @@ public class BigTableImpl implements BigTable {
   public String getUrl(String key) {
     return urls.get(key);
   }
+
+  @Override
+  public void deleteUrl(String key) {
+    urls.remove(key);
+  }
+
 }
