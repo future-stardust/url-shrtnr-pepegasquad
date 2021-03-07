@@ -12,7 +12,7 @@ micronaut:
           secret:
             generator:
               secret: supaDupaSecretThatNobodyWillKnow
-#    endpoints:
-#      logout:
-#        path: /users/signout
-#        enabled: true
+    endpoints:
+      logout:
+        enabled: true
+        get-allowed: true
