@@ -18,14 +18,12 @@ import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import java.lang.reflect.Array;
 import java.security.Principal;
 import java.util.ArrayList;
 
 @Controller("/urls")
 public class UrlShortenController {
 
-  record UrlClass(String url, String shortenedUrl) {}
   record UrlListClass(ArrayList<JsonObject> urls) {}
 
   @Secured(SecurityRule.IS_AUTHENTICATED)

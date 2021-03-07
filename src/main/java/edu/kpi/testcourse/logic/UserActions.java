@@ -151,6 +151,7 @@ public class UserActions {
    * List user urls
    *
    * @param shortenedUrlList shortened url
+   * @return url list consisting of { shortenedUrl: string, fullUrl: string }
    */
   public static ArrayList<JsonObject> listUrls(ArrayList<String> shortenedUrlList) {
     ArrayList<JsonObject> urlList = new ArrayList<>();
@@ -163,5 +164,15 @@ public class UserActions {
     }
 
     return urlList;
+  }
+
+  /**
+   * Retrieve full url from shortened one
+   *
+   * @param shortenedUrl - shortened url
+   * @return fullUrl
+   */
+  public static String retrieveUrl(String shortenedUrl) {
+    return BigTableImpl.urls.get(shortenedUrl);
   }
 }
