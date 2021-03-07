@@ -3,7 +3,9 @@ package edu.kpi.testcourse.model;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import edu.kpi.testcourse.Main;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -13,11 +15,12 @@ public class User {
   private String email;
   private String password;
   private transient String uuid;
-  private ArrayList<String> urlList;
+  private ArrayList<String> urlList;;
 
-  public User(String email, String password) {
+  public User(String email, String password, ArrayList<String> urlList) {
     this.email = email;
     this.password = password;
+    this.urlList = urlList;
   }
 
   public String getEmail() {
@@ -28,8 +31,24 @@ public class User {
     return password;
   }
 
+  public ArrayList<String> getUrlList() {
+    return urlList;
+  }
+
+  public void addUrlToUrlArray(String shortenedUrl) {
+    urlList.add(shortenedUrl);
+  }
+
+  public void removeUrlFromUrlArray(String shortenedUrl) {
+    urlList.remove(shortenedUrl);
+  }
+
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public void initiateUrlList() {
+    this.urlList = new ArrayList<>();
   }
 
   public String getUuid() {
