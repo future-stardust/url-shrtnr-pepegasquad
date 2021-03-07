@@ -15,7 +15,7 @@ public class User {
   private String email;
   private String password;
   private transient String uuid;
-  private ArrayList<String> urlList;;
+  private ArrayList<String> urlList;
 
   public User(String email, String password, ArrayList<String> urlList) {
     this.email = email;
