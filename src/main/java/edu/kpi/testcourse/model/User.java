@@ -17,6 +17,13 @@ public class User {
   private transient String uuid;
   private ArrayList<String> urlList;
 
+  /**
+   * Constructor for user.
+   *
+   * @param email user email
+   * @param password user password
+   * @param urlList list of URLs
+   */
   public User(String email, String password, ArrayList<String> urlList) {
     this.email = email;
     this.password = password;

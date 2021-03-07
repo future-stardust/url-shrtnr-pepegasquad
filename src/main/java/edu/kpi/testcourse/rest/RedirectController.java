@@ -20,15 +20,21 @@ import java.net.URISyntaxException;
  */
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Controller
-public class ApiController {
+public class RedirectController {
   record ExampleClass(String first, String second) {}
 
+  /**
+   * Method that process requests for redirecting you on full link.
+   *
+   * @param shortenedUrl provided shortened URL
+   * @return response code
+   */
   @Get(value = "/r/{shortenedUrl}", produces = MediaType.APPLICATION_JSON)
-  public MutableHttpResponse<String> hello(@Body String shortenedUrl) {
+  public MutableHttpResponse<String> redirect(@Body String shortenedUrl) {
     String fullUrl = UserActions.retrieveUrl(shortenedUrl);
 
     if (fullUrl == null) {
-      return HttpResponse.notFound("Shortened url with name '"+ shortenedUrl + "' not found");
+      return HttpResponse.notFound("Shortened url with name '" + shortenedUrl + "' not found");
     }
 
     try {

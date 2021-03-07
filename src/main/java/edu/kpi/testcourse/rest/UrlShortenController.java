@@ -21,18 +21,29 @@ import io.micronaut.security.rules.SecurityRule;
 import java.security.Principal;
 import java.util.ArrayList;
 
+/**
+ * Controller for URLs.
+ */
 @Controller("/urls")
 public class UrlShortenController {
 
   record UrlListClass(ArrayList<JsonObject> urls) {}
 
+  /**
+   * Method that process requests for shortening URL.
+   *
+   * @param token authorization bearer token
+   * @param object full URL in JSON format
+   * @param principal object to get identity of user
+   * @return response code
+   */
   @Secured(SecurityRule.IS_AUTHENTICATED)
   @Post(value = "/shorten",
-    consumes = MediaType.APPLICATION_JSON,
-    produces = MediaType.APPLICATION_JSON)
+      consumes = MediaType.APPLICATION_JSON,
+      produces = MediaType.APPLICATION_JSON)
   public MutableHttpResponse<String> shortenUrl(@Header("Authorization") String token,
-    @Body JSONObject object, Principal principal) {
-    if(BigTableImpl.tokens.contains(token.split(" ")[1])) {
+      @Body JSONObject object, Principal principal) {
+    if (BigTableImpl.tokens.contains(token.split(" ")[1])) {
       Url url = Main.getGson().fromJson(object.toJSONString(), Url.class);
 
       url.setShortenedUrl(Url.shortenUrl(Main.bigTable.getUrlId()));
@@ -48,21 +59,32 @@ public class UrlShortenController {
       UserActions.updateUser(user);
 
       return HttpResponse.created("");
-    } else return HttpResponse.unauthorized();
+    } else {
+      return HttpResponse.unauthorized();
+    }
   }
 
+  /**
+   * Method that process requests for deleting URLs from user's account.
+   *
+   * @param token authorization bearer token
+   * @param shortenedUrl shortened URL
+   * @param principal object to get identity of user
+   * @return response code
+   */
   @Secured(SecurityRule.IS_AUTHENTICATED)
   @Delete(value = "/{shortenedUrl}",
-    consumes = MediaType.APPLICATION_JSON,
-    produces = MediaType.APPLICATION_JSON)
+      consumes = MediaType.APPLICATION_JSON,
+      produces = MediaType.APPLICATION_JSON)
   public MutableHttpResponse<String> deleteUrl(@Header("Authorization") String token,
-    @Body String shortenedUrl, Principal principal) {
-    if(BigTableImpl.tokens.contains(token.split(" ")[1])) {
+      @Body String shortenedUrl, Principal principal) {
+    if (BigTableImpl.tokens.contains(token.split(" ")[1])) {
       String fullUrl = Main.bigTable.getUrl(shortenedUrl);
       User user = UserActions.retrieveUserByEmail(principal.getName());
 
       if (fullUrl == null) {
-        return HttpResponse.notFound("Shortened url with name '"+ shortenedUrl + "' doesn't exist");
+        return HttpResponse.notFound("Shortened url with name '" + shortenedUrl
+          + "' doesn't exist");
       }
       if (user == null) {
         return HttpResponse.unauthorized();
@@ -77,13 +99,20 @@ public class UrlShortenController {
     }
   }
 
+  /**
+   * Method that process requests for getting list of URLs from user's account.
+   *
+   * @param token authorization bearer token
+   * @param principal object to get identity of user
+   * @return list of URLs
+   */
   @Secured(SecurityRule.IS_AUTHENTICATED)
   @Get(value = "/",
-    consumes = MediaType.APPLICATION_JSON,
-    produces = MediaType.APPLICATION_JSON)
+      consumes = MediaType.APPLICATION_JSON,
+      produces = MediaType.APPLICATION_JSON)
   public MutableHttpResponse<String> listUrls(@Header("Authorization") String token,
-    Principal principal) {
-    if(BigTableImpl.tokens.contains(token.split(" ")[1])) {
+      Principal principal) {
+    if (BigTableImpl.tokens.contains(token.split(" ")[1])) {
       User user = UserActions.retrieveUserByEmail(principal.getName());
 
       if (user == null) {

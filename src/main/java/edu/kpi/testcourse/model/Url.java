@@ -11,20 +11,28 @@ import edu.kpi.testcourse.logic.UserActions;
 public class Url {
   private String shortenedUrl;
   private String fullUrl;
-  private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+      + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   private static final int BASE = ALPHABET.length();
 
-  public Url (String url) {
+  public Url(String url) {
     this.fullUrl = url;
   }
 
   public String getFullUrl() {
     return fullUrl;
   }
+
   public String getShortenedUrl() {
     return shortenedUrl;
   }
 
+  /**
+   * Method that provides logic of shortening.
+   *
+   * @param id URL identifier
+   * @return shortened URL
+   */
   public static String shortenUrl(Integer id) {
     StringBuilder sb = new StringBuilder();
     while (id > 0) {
@@ -45,7 +53,7 @@ public class Url {
     return JsonParser.parseString(json).getAsJsonObject();
   }
 
-  public void setShortenedUrl (String shortenedUrl) {
+  public void setShortenedUrl(String shortenedUrl) {
     this.shortenedUrl = shortenedUrl;
   }
 }

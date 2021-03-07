@@ -32,7 +32,7 @@ public class UserActions {
       boolean find = false;
       for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
         if ((user.getEmail()
-          .equals(Main.getGson().fromJson(entry.getValue(), User.class).getEmail()))) {
+            .equals(Main.getGson().fromJson(entry.getValue(), User.class).getEmail()))) {
           find = true;
           break;
         }
@@ -118,9 +118,9 @@ public class UserActions {
   public static boolean checkPassword(String providedEmail, String providedPassword) {
     for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
       if ((providedEmail.equals(Main.getGson().fromJson(entry.getValue(), User.class)
-        .getEmail()))
-        && (hash(providedPassword).equals(Main.getGson().fromJson(entry.getValue(), User.class)
-        .getPassword()))) {
+          .getEmail()))
+          && (hash(providedPassword).equals(Main.getGson().fromJson(entry.getValue(), User.class)
+          .getPassword()))) {
         return true;
       }
     }
@@ -139,7 +139,7 @@ public class UserActions {
   }
 
   /**
-   * Delete url
+   * Delete url.
    *
    * @param shortenedUrl shortened url
    */
@@ -148,7 +148,7 @@ public class UserActions {
   }
 
   /**
-   * List user urls
+   * List user urls.
    *
    * @param shortenedUrlList shortened url
    * @return url list consisting of { shortenedUrl: string, fullUrl: string }
@@ -156,7 +156,7 @@ public class UserActions {
   public static ArrayList<JsonObject> listUrls(ArrayList<String> shortenedUrlList) {
     ArrayList<JsonObject> urlList = new ArrayList<>();
 
-    for (String shortenedUrl: shortenedUrlList) {
+    for (String shortenedUrl : shortenedUrlList) {
       Url buf = new Url(BigTableImpl.urls.get(shortenedUrl));
       buf.setShortenedUrl(shortenedUrl);
 
@@ -167,7 +167,7 @@ public class UserActions {
   }
 
   /**
-   * Retrieve full url from shortened one
+   * Retrieve full url from shortened one.
    *
    * @param shortenedUrl - shortened url
    * @return fullUrl

@@ -34,11 +34,10 @@ public class UsersController {
   RxHttpClient client;
 
   /**
-   * in field "body" in Postman you should provide user email and password like
-   * {
-   *   "email" : "yourEmail",
-   *   "password" : "yourPassword"
-   * }.
+   * Method that process requests for signing in.
+   *
+   * @param object user email and password
+   * @return authorization bearer token
    */
   @Secured(SecurityRule.IS_ANONYMOUS)
   @Post(value = "/signin",
@@ -76,10 +75,16 @@ public class UsersController {
     return httpResponse;
   }
 
+  /**
+   * Method that process requests for signout.
+   *
+   * @param token authorization bearer token
+   * @return response code
+   */
   @Secured(SecurityRule.IS_AUTHENTICATED)
   @Post(value = "/signout", consumes = MediaType.APPLICATION_JSON)
   public HttpResponse signOut(@Header("Authorization") String token) {
-    if(BigTableImpl.tokens.contains(token.split(" ")[1])) {
+    if (BigTableImpl.tokens.contains(token.split(" ")[1])) {
       token = token.split(" ")[1]; // delete part 'Bearer '
       BigTableImpl.tokens.remove(token);
       return HttpResponse.noContent();
@@ -89,17 +94,15 @@ public class UsersController {
   }
 
   /**
-   * in field "body" in Postman you should provide user email and password like
-   * {
-   *   "email" : "yourEmail",
-   *   "password" : "yourPassword"
-   * }
-   * then you will see response that your user is created.
+   * Method that process requests for signing up.
+   *
+   * @param object user email and password
+   * @return response code
    */
   @Secured(SecurityRule.IS_ANONYMOUS)
   @Post(value = "/signup",
-    consumes = MediaType.APPLICATION_JSON,
-    produces = MediaType.APPLICATION_JSON)
+      consumes = MediaType.APPLICATION_JSON,
+      produces = MediaType.APPLICATION_JSON)
   public HttpResponse signUp(@Body JSONObject object) {
     User user = Main.getGson().fromJson(object.toJSONString(), User.class);
     user.setUuid(UUID.randomUUID().toString());
