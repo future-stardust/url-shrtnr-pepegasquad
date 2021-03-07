@@ -1,5 +1,7 @@
 package edu.kpi.testcourse.model;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import edu.kpi.testcourse.Main;
 import edu.kpi.testcourse.logic.UserActions;
 
@@ -30,6 +32,17 @@ public class Url {
       id /= BASE;
     }
     return sb.reverse().toString();
+  }
+
+  /**
+   * Convert Url to Json format.
+   *
+   * @return  object in json format
+   */
+  public JsonObject toJson() {
+    String json =  Main.getGson().toJson(this, Url.class);
+
+    return JsonParser.parseString(json).getAsJsonObject();
   }
 
   public void setShortenedUrl (String shortenedUrl) {
