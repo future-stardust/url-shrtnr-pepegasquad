@@ -85,6 +85,7 @@ public class UserActions {
   public static boolean findUserByEmail(String email) {
     for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
       if (email.equals(Main.getGson().fromJson(entry.getValue(), User.class).getEmail())) {
+
         return true;
       }
     }
@@ -101,10 +102,11 @@ public class UserActions {
   public static User retrieveUserByEmail(String email) {
     for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
       if (email.equals(Main.getGson().fromJson(entry.getValue(), User.class).getEmail())) {
-        return Main.getGson().fromJson(entry.getValue(), User.class);
+        User user = Main.getGson().fromJson(entry.getValue(), User.class);
+        user.setUuid(entry.getKey());
+        return user;
       }
     }
-
     return null;
   }
 
