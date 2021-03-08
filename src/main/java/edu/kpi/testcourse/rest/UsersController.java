@@ -45,6 +45,10 @@ public class UsersController {
       produces = MediaType.APPLICATION_JSON)
   public HttpResponse signIn(@Body JSONObject object) {
     User user = Main.getGson().fromJson(object.toJSONString(), User.class);
+    if (user.getEmail() == null)
+      return HttpResponse.badRequest("No email specified");
+    if (user.getPassword() == null)
+      return HttpResponse.badRequest("No password specified");
 
     for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
       if ((user.getEmail()
@@ -71,7 +75,7 @@ public class UsersController {
       return HttpResponse.notFound("User with email \"" + user.getEmail() + "\" was not found.");
     }
     JsonObject jsonObject = JsonParser.parseString(httpResponse.body()).getAsJsonObject();
-    BigTableImpl.tokens.add(jsonObject.get("access_token").toString().replace("\"", ""));
+    BigTableImpl.tokens.add(jsonObject.get("access_token").getAsString());
     return httpResponse;
   }
 
@@ -105,6 +109,10 @@ public class UsersController {
       produces = MediaType.APPLICATION_JSON)
   public HttpResponse signUp(@Body JSONObject object) {
     User user = Main.getGson().fromJson(object.toJSONString(), User.class);
+    if (user.getPassword() == null)
+      return HttpResponse.badRequest("No password specified");
+    if (user.getEmail() == null)
+      return HttpResponse.badRequest("No email specified");
     user.setUuid(UUID.randomUUID().toString());
     boolean response = UserActions.createUser(user);
     if (response) {
