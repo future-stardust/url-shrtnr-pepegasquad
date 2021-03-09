@@ -1,5 +1,6 @@
-package edu.kpi.testcourse.api.urlshorten;
+package edu.kpi.testcourse.api.logout;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.kpi.testcourse.Main;
 import edu.kpi.testcourse.bigtable.BigTableImpl;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.*;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,56 +26,61 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 @MicronautTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(PER_CLASS)
-public class UrlShortenTest {
+public class LogOutTest {
 
   @Inject
-  @Client("/")
+  @Client("/users")
   private HttpClient client;
 
   private String token;
 
   @Test
   @Order(1)
-  public void testShortenFailUnauthorized() {
-    User user = new User("pepega@kpi.ua", "password", new ArrayList<String>());
+  public void testSignOutFailNoAuth() {
+    User user = new User("signout@gmail.com", "password", new ArrayList<String>());
     UserActions.createUser(user);
 
     JsonObject jsonObject = new JsonObject();
-    jsonObject.addProperty("email", "pepega@kpi.ua");
+    jsonObject.addProperty("email", "signout@gmail.com");
     jsonObject.addProperty("password", "password");
-    HttpRequest<String> request = HttpRequest.POST("/users/signin", jsonObject.toString());
+    HttpRequest<String> request = HttpRequest.POST("/signin", jsonObject.toString());
     {
       var response = client.toBlocking().exchange(request, String.class);
       var body = Main.getGson().fromJson(response.getBody().get(), JsonObject.class);
       token = body.get("access_token").getAsString();
     }
+    assertThat(BigTableImpl.tokens).contains(token);
 
-    JsonObject jsonEmail = new JsonObject();
-    //jsonEmail.addProperty("email", "pepega@kpi.ua");
-    jsonEmail.addProperty("url", "http://pepega.kpi.ua");
-    request = HttpRequest.POST("/urls/shorten", jsonEmail.toString()).bearerAuth(token.toUpperCase());
-    var sizeBeforeRequest = BigTableImpl.urls.size();
+    request = HttpRequest.POST("/signout", "");
+
     try {
       HttpResponse<Object> response = client.toBlocking().exchange(request);
     } catch (HttpClientResponseException e) {
       assertEquals(HttpStatus.UNAUTHORIZED, e.getStatus());
     }
-    assertThat(BigTableImpl.urls.size()).isEqualTo(sizeBeforeRequest);
+    assertThat(BigTableImpl.tokens).contains(token);
   }
 
   @Test
   @Order(2)
-  public void testShorten() {
-    JsonObject jsonEmail = new JsonObject();
-    //jsonEmail.addProperty("email", "pepega@kpi.ua");
-    jsonEmail.addProperty("url", "http://pepega.kpi.ua");
-    HttpRequest<String> request = HttpRequest.POST("/urls/shorten", jsonEmail.toString()).bearerAuth(token);
-    var response = client.toBlocking().exchange(request, String.class);
-    assertEquals(HttpStatus.CREATED, response.getStatus());
-    var body = Main.getGson().fromJson(response.getBody().get(), JsonObject.class);
-    body.has("");
-    assertThat(body.keySet()).contains("shortened_url");
-    assertThat(BigTableImpl.urls).containsKey(body.get("shortened_url").getAsString());
-    assertThat(BigTableImpl.urls.get(body.get("shortened_url").getAsString())).isEqualTo("http://pepega.kpi.ua");
+  public void testSignOutFailWrongAuth() {
+    HttpRequest<String> request = HttpRequest.POST("/signout", "").bearerAuth(token.toUpperCase());
+
+    try {
+      HttpResponse<Object> response = client.toBlocking().exchange(request);
+    } catch (HttpClientResponseException e) {
+      assertEquals(HttpStatus.UNAUTHORIZED, e.getStatus());
+    }
+    assertThat(BigTableImpl.tokens).contains(token);
+  }
+
+  @Test
+  @Order(3)
+  public void testSignOut() {
+    HttpRequest<String> request = HttpRequest.POST("/signout", "").bearerAuth(token);
+    var response = client.toBlocking().exchange(request);
+    assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+
+    assertThat(BigTableImpl.tokens).doesNotContain(token);
   }
 }

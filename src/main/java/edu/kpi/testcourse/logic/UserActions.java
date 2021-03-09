@@ -31,8 +31,8 @@ public class UserActions {
     } else {
       boolean find = false;
       for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
-        if ((user.getEmail()
-            .equals(Main.getGson().fromJson(entry.getValue(), User.class).getEmail()))) {
+        if ((user.getEmail().equals(Main.getGson().fromJson(entry.getValue().toString(), User.class)
+            .getEmail()))) {
           find = true;
           break;
         }

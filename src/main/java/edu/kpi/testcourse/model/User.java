@@ -99,9 +99,6 @@ public class User {
    * @return  object in json format
    */
   public JsonObject toJson() {
-    String json =  Main.getGson().toJson(this, User.class);
-    JsonObject object = JsonParser.parseString(json).getAsJsonObject();
-
-    return object;
+    return Main.getGson().getAdapter(User.class).toJsonTree(this).getAsJsonObject();
   }
 }

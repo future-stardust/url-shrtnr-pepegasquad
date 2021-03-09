@@ -44,12 +44,13 @@ public class LogInTest {
     JsonObject jsonObjectNoPass = new JsonObject();
     jsonObjectNoPass.addProperty("email", "signin@gmail.com");
     var request = HttpRequest.POST("/", jsonObjectNoPass.toString());
+    var sizeBeforeRequest = BigTableImpl.tokens.size();
     try {
       HttpResponse<Object> response = client.toBlocking().exchange(request);
     } catch (HttpClientResponseException e) {
       assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
     }
-    assertThat(BigTableImpl.tokens).isEmpty();
+    assertThat(BigTableImpl.tokens.size()).isEqualTo(sizeBeforeRequest);
   }
 
   @Test
@@ -58,12 +59,13 @@ public class LogInTest {
     JsonObject jsonObjectNoEmail = new JsonObject();
     jsonObjectNoEmail.addProperty("password", "password");
     var request = HttpRequest.POST("/", jsonObjectNoEmail.toString());
+    var sizeBeforeRequest = BigTableImpl.tokens.size();
     try {
       HttpResponse<Object> response = client.toBlocking().exchange(request);
     } catch (HttpClientResponseException e) {
       assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
     }
-    assertThat(BigTableImpl.tokens).isEmpty();
+    assertThat(BigTableImpl.tokens.size()).isEqualTo(sizeBeforeRequest);
   }
 
   @Test
@@ -73,12 +75,13 @@ public class LogInTest {
     jsonObjectWrongPass.addProperty("email", "signin@gmail.com");
     jsonObjectWrongPass.addProperty("password", "myPassword");
     var request = HttpRequest.POST("/", jsonObjectWrongPass.toString());
+    var sizeBeforeRequest = BigTableImpl.tokens.size();
     try {
       HttpResponse<Object> response = client.toBlocking().exchange(request);
     } catch (HttpClientResponseException e) {
       assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
     }
-    assertThat(BigTableImpl.tokens).isEmpty();
+    assertThat(BigTableImpl.tokens.size()).isEqualTo(sizeBeforeRequest);
   }
 
   @Test
@@ -88,12 +91,13 @@ public class LogInTest {
     jsonObjectWrongEmail.addProperty("email", "singin@gmail.com");
     jsonObjectWrongEmail.addProperty("password", "password");
     var request = HttpRequest.POST("/", jsonObjectWrongEmail.toString());
+    var sizeBeforeRequest = BigTableImpl.tokens.size();
     try {
       HttpResponse<Object> response = client.toBlocking().exchange(request);
     } catch (HttpClientResponseException e) {
       assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
     }
-    assertThat(BigTableImpl.tokens).isEmpty();
+    assertThat(BigTableImpl.tokens.size()).isEqualTo(sizeBeforeRequest);
   }
 
   @Test

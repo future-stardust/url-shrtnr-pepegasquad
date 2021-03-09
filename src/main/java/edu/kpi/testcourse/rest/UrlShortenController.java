@@ -43,9 +43,17 @@ public class UrlShortenController {
       produces = MediaType.APPLICATION_JSON)
   public MutableHttpResponse<String> shortenUrl(@Header("Authorization") String token,
       @Body JSONObject object, Principal principal) {
-    if (BigTableImpl.tokens.contains(token.split(" ")[1])) {
-      Url url = Main.getGson().fromJson(object.toJSONString(), Url.class);
+    if (BigTableImpl.tokens.contains(token.replaceFirst("Bearer[ ]+", ""))) {
+      JsonObject urlJson = Main.getGson().fromJson(object.toJSONString(), JsonObject.class);
 
+      if (!urlJson.has("url")) {
+        JsonObject jsonResponse = new JsonObject();
+        jsonResponse.addProperty("reason_code", 0);
+        jsonResponse.addProperty("reason_text", "Cannot parse json");
+        return HttpResponse.badRequest(jsonResponse.toString()).contentType("application/json");
+      }
+
+      Url url = new Url(urlJson.get("url").getAsString());
       url.setShortenedUrl(Url.shortenUrl(Main.bigTable.getUrlId()));
       UserActions.putUrl(url.getShortenedUrl(), url.getFullUrl());
 
@@ -58,7 +66,9 @@ public class UrlShortenController {
       user.addUrlToUrlArray(url.getShortenedUrl());
       UserActions.updateUser(user);
 
-      return HttpResponse.created("");
+      JsonObject jsonResponse = new JsonObject();
+      jsonResponse.addProperty("shortened_url", url.getShortenedUrl());
+      return HttpResponse.created(jsonResponse.toString()).contentType("application/json");
     } else {
       return HttpResponse.unauthorized();
     }

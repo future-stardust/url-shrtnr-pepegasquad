@@ -46,12 +46,13 @@ public class SignUpTest {
 
     HttpRequest<String> request = HttpRequest.POST("/", jsonObject.toString());
 
+    var sizeBeforeRequest = BigTableImpl.users.size();
     try {
       HttpResponse<Object> response = client.toBlocking().exchange(request);
     } catch (HttpClientResponseException e) {
       assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
     }
-    assertThat(BigTableImpl.users.entrySet()).isEmpty();
+    assertThat(BigTableImpl.users.size()).isEqualTo(sizeBeforeRequest);
   }
 
   @Test
@@ -62,12 +63,13 @@ public class SignUpTest {
 
     HttpRequest<String> request = HttpRequest.POST("/", jsonObject.toString());
 
+    var sizeBeforeRequest = BigTableImpl.users.size();
     try {
       HttpResponse<Object> response = client.toBlocking().exchange(request);
     } catch (HttpClientResponseException e) {
       assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
     }
-    assertThat(BigTableImpl.users.entrySet()).isEmpty();
+    assertThat(BigTableImpl.users.size()).isEqualTo(sizeBeforeRequest);
   }
 
   @Test
@@ -85,7 +87,12 @@ public class SignUpTest {
     expected.addProperty("email", "signuptest@gmail.com");
     expected.addProperty("password", UserActions.hash("myPassword"));
     expected.add("urlList", new JsonArray());
-    Map.Entry<String, JsonObject> entry = BigTableImpl.users.entrySet().iterator().next();
-    assertThat(entry.getValue()).isEqualTo(expected);
+    jsonObject = null;
+    for (var entry : BigTableImpl.users.entrySet()) {
+      if (expected.equals(entry.getValue())) {
+        jsonObject = entry.getValue();
+      }
+    }
+    assertThat(jsonObject).isEqualTo(expected);
   }
 }
