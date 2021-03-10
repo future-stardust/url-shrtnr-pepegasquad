@@ -1,6 +1,7 @@
 package edu.kpi.testcourse.rest;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import edu.kpi.testcourse.Main;
 import edu.kpi.testcourse.bigtable.BigTableImpl;
@@ -11,6 +12,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.RxHttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -32,11 +34,10 @@ public class UsersController {
   RxHttpClient client;
 
   /**
-   * in field "body" in Postman you should provide user email and password like
-   * {
-   *   "email" : "yourEmail",
-   *   "password" : "yourPassword"
-   * }.
+   * Method that process requests for signing in.
+   *
+   * @param object user email and password
+   * @return authorization bearer token
    */
   @Secured(SecurityRule.IS_ANONYMOUS)
   @Post(value = "/signin",
@@ -44,6 +45,12 @@ public class UsersController {
       produces = MediaType.APPLICATION_JSON)
   public HttpResponse signIn(@Body JSONObject object) {
     User user = Main.getGson().fromJson(object.toJSONString(), User.class);
+    if (user.getEmail() == null) {
+      return HttpResponse.badRequest("No email specified");
+    }
+    if (user.getPassword() == null) {
+      return HttpResponse.badRequest("No password specified");
+    }
 
     for (Map.Entry<String, JsonObject> entry : BigTableImpl.users.entrySet()) {
       if ((user.getEmail()
@@ -55,43 +62,61 @@ public class UsersController {
     UsernamePasswordCredentials credentials =
         new UsernamePasswordCredentials(user.getEmail(), user.getPassword());
 
-    HttpResponse<BearerAccessRefreshToken> httpResponse;
+    HttpResponse<String> httpResponse;
+
     boolean response = UserActions.findUserByEmail(user.getEmail());
     if (response) {
       boolean isPasswordValid = UserActions.checkPassword(user.getEmail(), user.getPassword());
       if (isPasswordValid) {
         HttpRequest request = HttpRequest.POST("/login", credentials);
-        httpResponse = client.toBlocking().exchange(request, BearerAccessRefreshToken.class);
+        httpResponse = client.toBlocking().exchange(request, String.class);
       } else {
         return HttpResponse.badRequest("Invalid password");
       }
     } else {
       return HttpResponse.notFound("User with email \"" + user.getEmail() + "\" was not found.");
     }
-
+    JsonObject jsonObject = JsonParser.parseString(httpResponse.body()).getAsJsonObject();
+    BigTableImpl.tokens.add(jsonObject.get("access_token").getAsString());
     return httpResponse;
   }
 
+  /**
+   * Method that process requests for signout.
+   *
+   * @param token authorization bearer token
+   * @return response code
+   */
   @Secured(SecurityRule.IS_AUTHENTICATED)
-  @Post(value = "/signout")
-  public HttpResponse signOut() {
-    return HttpResponse.noContent();
+  @Post(value = "/signout", consumes = MediaType.APPLICATION_JSON)
+  public HttpResponse signOut(@Header("Authorization") String token) {
+    if (BigTableImpl.tokens.contains(token.split(" ")[1])) {
+      token = token.split(" ")[1]; // delete part 'Bearer '
+      BigTableImpl.tokens.remove(token);
+      return HttpResponse.noContent();
+    } else {
+      return HttpResponse.unauthorized();
+    }
   }
 
   /**
-   * in field "body" in Postman you should provide user email and password like
-   * {
-   *   "email" : "yourEmail",
-   *   "password" : "yourPassword"
-   * }
-   * then you will see response that your user is created.
+   * Method that process requests for signing up.
+   *
+   * @param object user email and password
+   * @return response code
    */
   @Secured(SecurityRule.IS_ANONYMOUS)
   @Post(value = "/signup",
-    consumes = MediaType.APPLICATION_JSON,
-    produces = MediaType.APPLICATION_JSON)
+      consumes = MediaType.APPLICATION_JSON,
+      produces = MediaType.APPLICATION_JSON)
   public HttpResponse signUp(@Body JSONObject object) {
     User user = Main.getGson().fromJson(object.toJSONString(), User.class);
+    if (user.getPassword() == null) {
+      return HttpResponse.badRequest("No password specified");
+    }
+    if (user.getEmail() == null) {
+      return HttpResponse.badRequest("No email specified");
+    }
     user.setUuid(UUID.randomUUID().toString());
     boolean response = UserActions.createUser(user);
     if (response) {

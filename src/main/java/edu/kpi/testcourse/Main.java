@@ -1,6 +1,7 @@
 package edu.kpi.testcourse;
 
 import com.google.gson.Gson;
+import edu.kpi.testcourse.bigtable.BigTableImpl;
 import io.micronaut.runtime.Micronaut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 public class Main {
   private static final Gson gson = new Gson();
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
+  public static BigTableImpl bigTable = new BigTableImpl();
 
   public static void main(String[] args) {
     logger.info("Hello world!");
