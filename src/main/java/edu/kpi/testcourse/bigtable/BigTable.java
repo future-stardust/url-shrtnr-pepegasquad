@@ -4,7 +4,8 @@ package edu.kpi.testcourse.bigtable;
 // ⚠️ base, implementation of key-value storage, etc)
 
 import com.google.gson.JsonObject;
-import com.nimbusds.jose.shaded.json.JSONObject;
+import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
+import java.util.Set;
 
 /**
  * BigTable is a key-value storage...
@@ -14,7 +15,15 @@ public interface BigTable {
 
   void putUrl(String key, String value);
 
+  void putToken(String token);
+
+  Set<String> getTokens();
+
+  Integer getUrlId();
+
   JsonObject getUser(String key);
 
   String getUrl(String key);
+
+  void deleteUrl(String key);
 }
