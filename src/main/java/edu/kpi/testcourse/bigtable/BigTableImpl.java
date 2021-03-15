@@ -1,7 +1,14 @@
 package edu.kpi.testcourse.bigtable;
 
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import edu.kpi.testcourse.model.User;
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,11 +22,11 @@ import java.util.Set;
  */
 public class BigTableImpl implements BigTable {
 
-  public static final Map<String, JsonObject> users = new HashMap<>();
-  public static final Map<String, String> urls = new HashMap<>();
+  public static Map<String, JsonObject> users = new HashMap<>();
+  public static Map<String, String> urls = new HashMap<>();
   public static final Set<String> tokens = new HashSet<>();
 
-  private static Integer urlId = 1;
+  public static Integer urlId = 1;
 
   @Override
   public void putUser(String key, JsonObject value) {

@@ -3,6 +3,7 @@ package edu.kpi.testcourse.model;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import edu.kpi.testcourse.Main;
+import edu.kpi.testcourse.bigtable.BigTableImpl;
 import edu.kpi.testcourse.logic.UserActions;
 
 /**
@@ -34,11 +35,18 @@ public class Url {
    * @return shortened URL
    */
   public static String shortenUrl(Integer id) {
-    StringBuilder sb = new StringBuilder();
-    while (id > 0) {
-      sb.append(ALPHABET.charAt(id % BASE));
-      id /= BASE;
-    }
+    StringBuilder sb;
+    int copyId = id;
+    do {
+      id = copyId;
+      sb = new StringBuilder("");
+      while (id > 0) {
+        sb.append(ALPHABET.charAt(id % BASE));
+        id /= BASE;
+      }
+      copyId++;
+    } while (BigTableImpl.urls.containsKey(sb.reverse().toString()));
+    BigTableImpl.urlId = copyId - 1;
     return sb.reverse().toString();
   }
 

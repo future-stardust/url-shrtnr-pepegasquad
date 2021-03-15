@@ -23,7 +23,47 @@ There are four modules:
 - `rest` - **REST API** - a module that provides a REST API. [Micronaut] framework is already added
   to project dependencies. It simplifies creation of REST API and provides built-in JWT 
   authentication.
+#### Main scenario endpoints
 
+1. Sign up
+
+```shell
+curl --location --request POST 'http://localhost:8080/users/signup' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email" : "alexandr@gmail.com",
+    "password" : "myPassword"
+}'
+```
+
+2. Login
+
+```shell
+curl --location --request POST 'http://localhost:8080/users/signin' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email" : "alexandr@gmail.com",
+    "password" : "myPassword"
+}'
+```
+
+3. Shorten URL
+
+```shell
+curl --location --request POST 'http://localhost:8080/urls/shorten' \
+--header 'Authorization: Bearer <TOKEN FROM THE LOGIN RESPONSE>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "url" : "https://www.youtube.com/feed/subscriptions"
+}'
+```
+
+4. Redirect
+
+```shell
+curl --location --request GET 'http://localhost:8080/r/b' \
+--data-raw ''
+```
 ## Environment prerequisites
 
 ### Java
