@@ -3,10 +3,14 @@ package edu.kpi.testcourse.logic;
 import com.google.gson.JsonObject;
 import edu.kpi.testcourse.Main;
 import edu.kpi.testcourse.bigtable.BigTableImpl;
+import edu.kpi.testcourse.bigtable.UrlRepositoryFile;
+import edu.kpi.testcourse.bigtable.UserRepositoryFile;
 import edu.kpi.testcourse.model.Url;
 import edu.kpi.testcourse.model.User;
+import edu.kpi.testcourse.serialization.JsonToolJacksonImpl;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -27,6 +31,8 @@ public class UserActions {
     user.initiateUrlList();
     if (BigTableImpl.users.isEmpty()) {
       BigTableImpl.users.put(user.getUuid(), user.toJson());
+      UserRepositoryFile.writeUsersToJsonDatabaseFile(new JsonToolJacksonImpl(),
+          UserRepositoryFile.makeJsonFilePath(Path.of("./")));
       return true;
     } else {
       boolean find = false;
@@ -39,7 +45,8 @@ public class UserActions {
       }
       if (!find) {
         BigTableImpl.users.put(user.getUuid(), user.toJson());
-
+        UserRepositoryFile.writeUsersToJsonDatabaseFile(new JsonToolJacksonImpl(),
+            UserRepositoryFile.makeJsonFilePath(Path.of("./")));
         return true;
       }
     }
@@ -54,6 +61,8 @@ public class UserActions {
    */
   public static void updateUser(User user) {
     BigTableImpl.users.put(user.getUuid(), user.toJson());
+    UserRepositoryFile.writeUsersToJsonDatabaseFile(new JsonToolJacksonImpl(),
+        UserRepositoryFile.makeJsonFilePath(Path.of("./")));
   }
 
   /**
@@ -138,6 +147,8 @@ public class UserActions {
    */
   public static void putUrl(String shortenedUrl, String fullUrl) {
     Main.bigTable.putUrl(shortenedUrl, fullUrl);
+    UrlRepositoryFile.writeUrlsToJsonDatabaseFile(new JsonToolJacksonImpl(),
+        UrlRepositoryFile.makeJsonFilePath(Path.of("./")));
   }
 
   /**
