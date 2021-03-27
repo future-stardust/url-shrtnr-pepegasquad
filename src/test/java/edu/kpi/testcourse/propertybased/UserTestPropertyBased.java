@@ -48,4 +48,24 @@ public class UserTestPropertyBased {
       return UserActions.retrieveUserByEmail(email).getUrlList().contains(shortUrl);
     });
   }
+
+  @Test
+  void shouldUpdateUserPassword() {
+    qt().forAll(
+      strings().basicLatinAlphabet().ofLengthBetween(MIN_LENGTH, MAX_LENGTH),
+      strings().basicLatinAlphabet().ofLengthBetween(MIN_LENGTH, MAX_LENGTH),
+      strings().basicLatinAlphabet().ofLengthBetween(MIN_LENGTH, MAX_LENGTH)
+    ).check((email, oldPassword, newPassword) -> {
+      // GIVEN
+      UserActions.createUser(new User(email, oldPassword, new ArrayList<>()));
+      User user = UserActions.retrieveUserByEmail(email);
+
+      // WHEN
+      user.setPassword(newPassword);
+      UserActions.updateUser(user);
+
+      // THEN
+      return UserActions.retrieveUserByEmail(email).getPassword().equals(newPassword);
+    });
+  }
 }
