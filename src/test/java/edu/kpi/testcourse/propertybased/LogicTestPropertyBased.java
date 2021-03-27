@@ -24,4 +24,19 @@ public class LogicTestPropertyBased {
       return userActions.retrieveUrl(alias)==url;
     });
   }
+
+  @Test
+  void shouldDeleteUrl() {
+    qt().forAll(
+      strings().basicLatinAlphabet().ofLengthBetween(MIN_LENGTH, MAX_LENGTH),
+      strings().basicLatinAlphabet().ofLengthBetween(MIN_LENGTH, MAX_LENGTH)
+    ).check((alias, url) -> {
+      // GIVEN
+      UserActions.putUrl(alias, url);
+      // WHEN
+      UserActions.deleteUrl(alias);
+      // THEN
+      return UserActions.retrieveUrl(alias) == null;
+    });
+  }
 }
