@@ -10,8 +10,6 @@ public class LogicTestPropertyBased {
   static final int MIN_LENGTH = 6;
   static final int MAX_LENGTH = 10;
 
-  UserActions userActions = new UserActions();
-
   @Test
   void doesCreatedAliasExist_propertyBased() {
     qt().forAll(
@@ -19,9 +17,9 @@ public class LogicTestPropertyBased {
       strings().basicLatinAlphabet().ofLengthBetween(MIN_LENGTH, MAX_LENGTH)
     ).check((alias, url) -> {
       // WHEN
-      userActions.putUrl(alias, url);
+      UserActions.putUrl(alias, url);
       // THEN
-      return userActions.retrieveUrl(alias)==url;
+      return UserActions.retrieveUrl(alias).equals(url);
     });
   }
 }

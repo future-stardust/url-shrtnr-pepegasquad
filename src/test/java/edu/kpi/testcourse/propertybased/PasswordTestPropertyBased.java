@@ -11,8 +11,6 @@ public class PasswordTestPropertyBased {
   static final int MIN_LENGTH = 6;
   static final int MAX_LENGTH = 10;
 
-  UserActions userActions = new UserActions();
-
   @Test
   public void checkPasswordEqual_propertyBased() {
     qt().forAll(
@@ -22,7 +20,7 @@ public class PasswordTestPropertyBased {
       String pass1 = UserActions.hash(password);
       String pass2 = UserActions.hash(password);
       // THEN
-      return pass1==pass2;
+      return pass1.equals(pass2);
     });
   }
 
@@ -36,7 +34,7 @@ public class PasswordTestPropertyBased {
       String pass1 = UserActions.hash(password1);
       String pass2 = UserActions.hash(password2);
       // THEN
-      return pass1!=pass2;
+      return !pass1.equals(pass2);
     });
   }
 }
