@@ -33,8 +33,11 @@ public class PasswordTestPropertyBased {
       // WHEN
       String pass1 = UserActions.hash(password1);
       String pass2 = UserActions.hash(password2);
-      // THEN
-      return !pass1.equals(pass2);
+      if (!password1.equals(password2)) {
+        // THEN
+        return !pass1.equals(pass2);
+      }
+      return pass1.equals(pass2);
     });
   }
 }
